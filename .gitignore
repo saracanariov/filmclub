@@ -22,6 +22,7 @@ var/
 
 # Flask
 instance/
+!instance/.gitkeep
 .webassets-cache
 
 # Virtual Environment
