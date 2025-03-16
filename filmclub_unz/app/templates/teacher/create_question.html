@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Question - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Create New Question</h2>
+    <form method="post">
+        <div class="form-group">
+            <label for="question_text">Question Text</label>
+            <textarea id="question_text" name="question_text" required rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty" name="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Categories</label>
+            <div class="categories-container">
+                {% if categories %}
+                    {% for category in categories %}
+                        <div class="category-checkbox">
+                            <input type="checkbox" id="category_{{ category.category_id }}" name="categories" value="{{ category.category_id }}">
+                            <label for="category_{{ category.category_id }}">{{ category.category_name }}</label>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="form-info">No categories available. <a href="{{ url_for('teacher.create_category') }}">Create a category</a> first.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Choices</label>
+            <p class="form-info">Add at least two choices and mark the correct answer(s).</p>
+            
+            <div id="choices-container">
+                <div class="choice-item">
+                    <input type="text" name="choice_text" placeholder="Enter choice text" required>
+                    <input type="checkbox" name="is_correct" value="0" id="is_correct_0">
+                    <label for="is_correct_0">Correct</label>
+                </div>
+                <div class="choice-item">
+                    <input type="text" name="choice_text" placeholder="Enter choice text" required>
+                    <input type="checkbox" name="is_correct" value="1" id="is_correct_1">
+                    <label for="is_correct_1">Correct</label>
+                </div>
+            </div>
+            
+            <button type="button" id="add-choice" class="btn btn-outline">Add Another Choice</button>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">Save Question</button>
+            <a href="{{ url_for('teacher.list_questions') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    
+    .form-info {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    textarea, input[type="text"], select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .categories-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .category-checkbox {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+    
+    .category-checkbox input {
+        margin-right: 0.25rem;
+    }
+    
+    .choice-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .choice-item input[type="text"] {
+        flex: 1;
+        margin-right: 0.5rem;
+    }
+    
+    .choice-item input[type="checkbox"] {
+        margin-right: 0.25rem;
+    }
+    
+    #add-choice {
+        margin-top: 0.5rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-outline {
+        background-color: transparent;
+        border: 1px solid #3498db;
+        color: #3498db;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const choicesContainer = document.getElementById('choices-container');
+        const addChoiceButton = document.getElementById('add-choice');
+        let choiceCount = 2; // Start with 2 choices
+        
+        addChoiceButton.addEventListener('click', function() {
+            const choiceItem = document.createElement('div');
+            choiceItem.className = 'choice-item';
+            
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'text';
+            choiceInput.name = 'choice_text';
+            choiceInput.placeholder = 'Enter choice text';
+            choiceInput.required = true;
+            
+            const correctCheckbox = document.createElement('input');
+            correctCheckbox.type = 'checkbox';
+            correctCheckbox.name = 'is_correct';
+            correctCheckbox.value = choiceCount;
+            correctCheckbox.id = 'is_correct_' + choiceCount;
+            
+            const checkboxLabel = document.createElement('label');
+            checkboxLabel.htmlFor = 'is_correct_' + choiceCount;
+            checkboxLabel.textContent = 'Correct';
+            
+            choiceItem.appendChild(choiceInput);
+            choiceItem.appendChild(correctCheckbox);
+            choiceItem.appendChild(checkboxLabel);
+            
+            choicesContainer.appendChild(choiceItem);
+            choiceCount++;
+        });
+    });
+</script>
+{% endblock %} 

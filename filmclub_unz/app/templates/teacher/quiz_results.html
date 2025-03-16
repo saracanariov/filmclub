@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Results: {{ quiz.title }} - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <h2>Quiz Results: {{ quiz.title }}</h2>
+    
+    <div class="card">
+        <h3 class="card-title">Summary</h3>
+        
+        <div class="summary-stats">
+            <div class="stat-item">
+                <div class="stat-label">Total Questions</div>
+                <div class="stat-value">{{ quiz.questions|length }}</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-label">Students Participated</div>
+                <div class="stat-value">{{ student_results|length }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3 class="card-title">Student Results</h3>
+        
+        {% if student_results %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Questions Answered</th>
+                        <th>Correct Answers</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_id, username, total_answers, correct_answers in student_results %}
+                        <tr>
+                            <td>{{ username }}</td>
+                            <td>{{ total_answers }}</td>
+                            <td>{{ correct_answers }}</td>
+                            <td>
+                                {% if total_answers > 0 %}
+                                    {{ (correct_answers / total_answers * 100)|round|int }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No students have participated in this quiz yet.</p>
+        {% endif %}
+    </div>
+    
+    <div class="actions">
+        <a href="{{ url_for('teacher.view_quiz', quiz_id=quiz.quiz_id) }}" class="btn">View Quiz</a>
+        <a href="{{ url_for('teacher.list_quizzes') }}" class="btn">Back to Quizzes</a>
+        
+        {% if not quiz.is_active %}
+            <form action="{{ url_for('teacher.start_quiz', quiz_id=quiz.quiz_id) }}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-success">Start Quiz Again</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .results-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .summary-stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 1.5rem 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #7f8c8d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .actions {
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %} 

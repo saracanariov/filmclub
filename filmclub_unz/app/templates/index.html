@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <div class="hero">
+        <h2>Welcome to FilmClub Quizzer</h2>
+        <p>An interactive quiz platform for film enthusiasts</p>
+    </div>
+    
+    <div class="features">
+        <div class="feature-card">
+            <h3>For Teachers</h3>
+            <ul>
+                <li>Create and manage quizzes</li>
+                <li>Build a question bank</li>
+                <li>Categorize questions</li>
+                <li>Run live quiz sessions</li>
+                <li>Manage students</li>
+            </ul>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-success">Teacher Login</a>
+        </div>
+        
+        <div class="feature-card">
+            <h3>For Students</h3>
+            <ul>
+                <li>Join active quiz sessions</li>
+                <li>Answer questions</li>
+                <li>View your final score</li>
+            </ul>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-success">Student Login</a>
+        </div>
+    </div>
+    
+    <div class="cta">
+        <p>Don't have an account?</p>
+        <a href="{{ url_for('auth.register') }}" class="btn">Register Now</a>
+    </div>
+</div>
+
+<style>
+    .home-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .hero {
+        margin: 2rem 0;
+    }
+    
+    .hero h2 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.25rem;
+        color: #7f8c8d;
+    }
+    
+    .features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .feature-card {
+        flex: 1;
+        max-width: 400px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-card h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    
+    .feature-card ul {
+        text-align: left;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-card li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .cta {
+        margin: 2rem 0;
+    }
+    
+    @media (max-width: 768px) {
+        .features {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .feature-card {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %} 

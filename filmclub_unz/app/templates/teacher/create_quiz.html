@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Quiz - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="create-quiz-container">
+    <h2>Create New Quiz</h2>
+    
+    <form method="post">
+        <div class="form-group">
+            <label for="title">Quiz Title</label>
+            <input type="text" name="title" id="title" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="question_count">Number of Questions</label>
+            <input type="number" name="question_count" id="question_count" min="1" value="10" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="difficulty">Difficulty</label>
+            <select name="difficulty" id="difficulty">
+                <option value="Any">Any</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Selection Method</label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="selection_method" value="random" checked> 
+                    Random Selection (based on categories)
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Categories (select one or more)</label>
+            <div class="categories-selection">
+                {% for category in categories %}
+                    <label class="category-checkbox">
+                        <input type="checkbox" name="categories" value="{{ category.category_id }}">
+                        {{ category.category_name }}
+                    </label>
+                {% endfor %}
+            </div>
+            <p class="help-text">If no categories are selected, questions will be chosen from all categories.</p>
+        </div>
+        
+        <div class="form-actions">
+            <input type="submit" value="Create Quiz" class="btn btn-success">
+            <a href="{{ url_for('teacher.list_quizzes') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .create-quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .radio-group {
+        margin-top: 0.5rem;
+    }
+    
+    .radio-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: normal;
+    }
+    
+    .categories-selection {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .category-checkbox {
+        display: block;
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: normal;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #7f8c8d;
+        margin-top: 0.25rem;
+    }
+    
+    .form-actions {
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %} 

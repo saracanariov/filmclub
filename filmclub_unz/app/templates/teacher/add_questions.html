@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Questions to {{ quiz.title }} - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="add-questions-container">
+    <div class="header-actions">
+        <h2>Add Questions to "{{ quiz.title }}"</h2>
+        <a href="{{ url_for('teacher.view_quiz', quiz_id=quiz.quiz_id) }}" class="btn">Back to Quiz</a>
+    </div>
+    
+    <div class="quiz-info">
+        <p>Currently {{ quiz.questions|length }} of {{ quiz.question_count }} questions in quiz</p>
+    </div>
+    
+    {% if available_questions %}
+        <form method="post">
+            <div class="filter-section">
+                <h3>Filter Questions</h3>
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="difficulty-filter">Difficulty:</label>
+                        <select id="difficulty-filter" class="filter">
+                            <option value="all">All Difficulties</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="category-filter">Category:</label>
+                        <select id="category-filter" class="filter">
+                            <option value="all">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.category_name|lower }}">{{ category.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="questions-list">
+                <h3>Available Questions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col"><input type="checkbox" id="select-all"></th>
+                            <th>Question</th>
+                            <th>Difficulty</th>
+                            <th>Categories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in available_questions %}
+                            <tr class="question-row" 
+                                data-difficulty="{{ question.difficulty|lower }}"
+                                data-categories="{% for category in question.categories %}{{ category.category_name|lower }} {% endfor %}">
+                                <td class="checkbox-col">
+                                    <input type="checkbox" name="question_ids" value="{{ question.question_id }}" class="question-checkbox">
+                                </td>
+                                <td>{{ question.question_text }}</td>
+                                <td>{{ question.difficulty }}</td>
+                                <td>
+                                    {% for category in question.categories %}
+                                        <span class="badge badge-primary">{{ category.category_name }}</span>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">Add Selected Questions</button>
+                <a href="{{ url_for('teacher.view_quiz', quiz_id=quiz.quiz_id) }}" class="btn">Cancel</a>
+            </div>
+        </form>
+    {% else %}
+        <div class="card">
+            <p>No available questions to add. Please create new questions first.</p>
+            <a href="{{ url_for('teacher.create_question') }}" class="btn btn-success">Create a Question</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .add-questions-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .quiz-info {
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .filter-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .filter-controls {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 200px;
+    }
+    
+    .filter-group label {
+        margin-bottom: 0.25rem;
+    }
+    
+    .questions-list {
+        margin-bottom: 1.5rem;
+    }
+    
+    .checkbox-col {
+        width: 50px;
+        text-align: center;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        margin-right: 0.25rem;
+    }
+    
+    .badge-primary {
+        background-color: #3498db;
+        color: white;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .card {
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const questionCheckboxes = document.querySelectorAll('.question-checkbox');
+        const difficultyFilter = document.getElementById('difficulty-filter');
+        const categoryFilter = document.getElementById('category-filter');
+        const questionRows = document.querySelectorAll('.question-row');
+        
+        // Handle select all functionality
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                questionCheckboxes.forEach(checkbox => {
+                    if (checkbox.closest('tr').style.display !== 'none') {
+                        checkbox.checked = isChecked;
+                    }
+                });
+            });
+        }
+        
+        // Apply filters when they change
+        function applyFilters() {
+            const difficultyValue = difficultyFilter.value;
+            const categoryValue = categoryFilter.value;
+            
+            questionRows.forEach(row => {
+                const rowDifficulty = row.getAttribute('data-difficulty');
+                const rowCategories = row.getAttribute('data-categories');
+                
+                const difficultyMatch = difficultyValue === 'all' || rowDifficulty === difficultyValue;
+                const categoryMatch = categoryValue === 'all' || rowCategories.includes(categoryValue);
+                
+                row.style.display = difficultyMatch && categoryMatch ? '' : 'none';
+            });
+            
+            // Uncheck "select all" if any filtered row is hidden
+            selectAllCheckbox.checked = false;
+        }
+        
+        if (difficultyFilter) {
+            difficultyFilter.addEventListener('change', applyFilters);
+        }
+        
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', applyFilters);
+        }
+    });
+</script>
+{% endblock %} 
