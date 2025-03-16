@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Results - FilmClub Quizzer{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <h2>Quiz Results: {{ quiz.title }}</h2>
+    
+    <div class="card">
+        <h3 class="card-title">Your Score</h3>
+        
+        <div class="score-display">
+            <div class="score">{{ correct_answers }} / {{ total_questions }}</div>
+            <div class="percentage">{{ (correct_answers / total_questions * 100)|round|int }}%</div>
+        </div>
+        
+        <div class="score-details">
+            <p>Total Questions: {{ total_questions }}</p>
+            <p>Questions Answered: {{ answered_questions }}</p>
+            <p>Correct Answers: {{ correct_answers }}</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3 class="card-title">Your Answers</h3>
+        
+        {% if answers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Your Answer</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question_text, choice_text, is_correct in answers %}
+                        <tr>
+                            <td>{{ question_text }}</td>
+                            <td>{{ choice_text }}</td>
+                            <td>
+                                {% if is_correct %}
+                                    <span class="correct">Correct</span>
+                                {% else %}
+                                    <span class="incorrect">Incorrect</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You didn't answer any questions in this quiz.</p>
+        {% endif %}
+    </div>
+    
+    <a href="{{ url_for('student.dashboard') }}" class="btn">Back to Dashboard</a>
+</div>
+
+<style>
+    .results-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .score-display {
+        text-align: center;
+        margin: 2rem 0;
+    }
+    
+    .score {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+    
+    .percentage {
+        font-size: 1.5rem;
+        color: #7f8c8d;
+    }
+    
+    .score-details {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+    
+    .correct {
+        color: #2ecc71;
+        font-weight: bold;
+    }
+    
+    .incorrect {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+</style>
+{% endblock %} 
