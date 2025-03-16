@@ -21,9 +21,9 @@ var/
 *.egg
 
 # Flask
-instance/
-!instance/.gitkeep
-.webassets-cache
+#instance/
+#!instance/.gitkeep
+#.webassets-cache
 
 # Virtual Environment
 venv/
